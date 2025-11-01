@@ -1,0 +1,10 @@
+{
+  "env": "development",
+  "express": {
+    "jsonLimit": "1kb",
+    "requestTimeout": 30000
+  },
+  "cors": {
+    "origin": "http://localhost:3000"
+  }
+}

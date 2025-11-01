@@ -1,5 +1,5 @@
-import { env } from './config/env';
 import { createServer } from './app';
+import { env } from './config/env';
 
 async function main() {
   const app = createServer();
@@ -23,15 +23,15 @@ async function main() {
 
   process.on('SIGINT', () => shutdownHandler('SIGINT'));
   process.on('SIGTERM', () => shutdownHandler('SIGTERM'));
-  process.on('uncaughtException', (err) => {
-    console.error('Uncaught Exception:', err);
+  process.on('uncaughtException', (error: any) => {
+    console.error('Uncaught Exception:', error);
 
     shutdownHandler('uncaughtException');
   });
 }
 
-main().catch((err) => {
-  console.error('Fatal error:', err);
+main().catch((error: any) => {
+  console.error('Fatal error:', error);
 
   process.exit(1);
 });

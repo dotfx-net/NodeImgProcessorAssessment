@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+import { config } from './config';
 
 dotenv.config();
 
@@ -11,5 +12,6 @@ function getEnv(key: string, fallback?: string): string {
 }
 
 export const env = {
-  PORT: Number(getEnv('PORT', '3000'))
+  PORT: Number(getEnv('PORT', String(config?.express?.port || 3000))),
+  NODE_ENV: getEnv('NODE_ENV', config.env)
 };

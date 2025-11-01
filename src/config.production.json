@@ -1,0 +1,7 @@
+{
+  "env": "production",
+  "express": {
+    "jsonLimit": "1kb",
+    "requestTimeout": 30000
+  }
+}
