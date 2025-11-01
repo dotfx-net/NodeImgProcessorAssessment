@@ -8,7 +8,8 @@
     "dev": "cross-env NODE_ENV=development nodemon src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
-    "test": "jest"
+    "test:unit": "cross-env NODE_ENV=development jest --config jest.config.unit.json --detectOpenHandles --forceExit",
+    "test:integration": "cross-env NODE_ENV=development jest --config jest.config.integration.json --detectOpenHandles --forceExit"
   },
   "author": "Christian Vandaele <christian@dotfx.net>",
   "dependencies": {
@@ -19,18 +20,22 @@
     "express": "^5.1.0",
     "mongoose": "^8.19.2",
     "morgan": "^1.10.1",
+    "supertest": "^7.1.4",
     "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.1"
+    "swagger-ui-express": "^5.0.1",
+    "zod": "^4.1.12"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/errorhandler": "^1.5.3",
     "@types/express": "^5.0.5",
+    "@types/jest": "^30.0.0",
     "@types/morgan": "^1.9.10",
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.8",
     "jest": "^30.2.0",
     "nodemon": "^3.1.10",
+    "ts-jest": "^29.4.5",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.9.3"

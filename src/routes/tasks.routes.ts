@@ -1,6 +1,19 @@
 import { Router, Request, Response } from 'express';
-
+import { validate } from '../middleware/validate';
+import { z } from 'zod';
 const router = Router();
+
+const createTaskSchema = z.object({
+  body: z.object({
+    source: z.string().min(1, 'Source is required')
+  })
+});
+
+const getTaskSchema = z.object({
+  params: z.object({
+    taskId: z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid taskId format')
+  })
+});
 
 /**
  * @swagger
@@ -44,7 +57,7 @@ const router = Router();
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post('/', (req: Request, res: Response) => {
+router.post('/', validate(createTaskSchema), (req: Request, res: Response) => {
   const taskData = req.body;
 
   res.status(201).json({ taskId: '123', ...taskData, price: 1 });
@@ -122,7 +135,7 @@ router.post('/', (req: Request, res: Response) => {
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get('/:taskId', (req: Request, res: Response) => {
+router.get('/:taskId', validate(getTaskSchema), (req: Request, res: Response) => {
   const { taskId } = req.params;
 
   res.json({ taskId, status: 'pending', price: 1 });
