@@ -1,0 +1,21 @@
+{
+  "name": "node-img-processor-assessment",
+  "version": "1.0.0",
+  "description": "Node Image Processor Assessment",
+  "private": true,
+  "scripts": {
+    "dev": "nodemon src/index.ts"
+  },
+  "author": "Christian Vandaele <christian@dotfx.net>",
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "jest": "^30.2.0",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.9.3"
+  }
+}
