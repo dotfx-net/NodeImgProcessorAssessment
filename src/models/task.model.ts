@@ -16,7 +16,20 @@ const TaskSchema = new Schema<ITask>(
   {
     status: { type: String, enum: ['pending', 'completed', 'failed'], required: true, index: true },
     price: { type: Number, required: true },
-    originalPath: { type: String, required: true },
+    originalPath: {
+      type: String,
+      required: true,
+      validate: {
+        validator: (v: string) => {
+          if (/^https?:\/\//i.test(v)) { return true; } // URL
+          if (/^\//.test(v) || /^\.\.?\//.test(v)) { return true; } // Unix path
+          if (/^[a-zA-Z]:[\\\/]/.test(v) || /^\.\.?[\\\/]/.test(v) || /^\\\\/.test(v)) { return true; } // Windows path
+
+          return false;
+        },
+        message: 'Invalid URL or path format'
+      }
+    },
     images: [
       {
         resolution: { type: String, required: true },

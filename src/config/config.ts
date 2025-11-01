@@ -16,6 +16,11 @@ export interface Config {
   mongodb?: {
     uri: string;
   };
+
+  processing: {
+    sizes: number[];
+    output: string;
+  };
 };
 
 function loadConfig(): Config {

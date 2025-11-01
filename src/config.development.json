@@ -9,5 +9,9 @@
   },
   "mongodb": {
     "uri": "mongodb://localhost:27017/image_task_api"
+  },
+  "processing": {
+    "sizes": [1024, 800],
+    "output": "output"
   }
 }

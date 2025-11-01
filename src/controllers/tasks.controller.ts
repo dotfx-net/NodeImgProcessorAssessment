@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { createTask, getTask, markCompleted, markFailed } from '../services/task.service';
 import type { TaskStatus } from '../models/task.model';
+import { processAndSave } from '../services/image.service';
+import { config } from '../config/config';
 
 interface TaskResponse {
   taskId: string;
@@ -42,19 +44,17 @@ export async function getTaskById(req: Request, res: Response, next: NextFunctio
   }
 }
 
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-
 export async function postTask(req: Request, res: Response, next: NextFunction) {
   try {
     const { source } = req.body as { source: string };
     const task = await createTask(source);
 
-    // image service as background job here
+    // image service as background job
     (async () => {
       try {
-        await sleep(5_000);
+        const images = await processAndSave(String(task._id), source, config.processing.sizes);
 
-        await markCompleted(String(task._id), []);
+        await markCompleted(String(task._id), images);
       } catch (error: any) {
         await markFailed(String(task._id), error?.message || 'Processing failed');
       }

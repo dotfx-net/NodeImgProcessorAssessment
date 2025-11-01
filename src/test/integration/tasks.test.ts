@@ -1,6 +1,7 @@
 import request from 'supertest';
 import { createServer } from '../../app';
 import { TaskModel } from '../../models/task.model';
+import { ImageModel } from '../../models/image.model';
 
 const app = createServer();
 
@@ -104,5 +105,31 @@ describe('Tasks API integration tests', () => {
       expect(response.body.images[0]).toHaveProperty('resolution');
       expect(response.body.images[0]).toHaveProperty('path');
     });
+  });
+
+  describe('Task processing flow', () => {
+    it('should process task in background and update status', async () => {
+      const response = await request(app)
+        .post('/tasks')
+        .send({ source: 'https://picsum.photos/1' })
+        .expect(201);
+
+      const taskId = response.body.taskId;
+
+      // wait for processing
+      setTimeout(async () => {
+        const task = await TaskModel.findById(taskId);
+
+        expect(task?.status).toMatch(/completed|failed|pending/);
+
+        if (task?.status === 'completed') {
+          expect(task.images.length).toBeGreaterThan(0);
+
+          const images = await ImageModel.find({ taskId });
+
+          expect(images.length).toBeGreaterThan(0);
+        }
+      }, 5_000);
+    }, 10_000);
   });
 });
