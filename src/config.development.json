@@ -6,5 +6,8 @@
   },
   "cors": {
     "origin": "http://localhost:3000"
+  },
+  "mongodb": {
+    "uri": "mongodb://localhost:27017/image_task_api"
   }
 }

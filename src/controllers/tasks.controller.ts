@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { createTask, getTask } from '../services/task.service.js';
+import { createTask, getTask, markCompleted, markFailed } from '../services/task.service';
 import type { TaskStatus } from '../models/task.model';
 
 interface TaskResponse {
@@ -42,12 +42,23 @@ export async function getTaskById(req: Request, res: Response, next: NextFunctio
   }
 }
 
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
 export async function postTask(req: Request, res: Response, next: NextFunction) {
   try {
     const { source } = req.body as { source: string };
     const task = await createTask(source);
 
     // image service as background job here
+    (async () => {
+      try {
+        await sleep(5_000);
+
+        await markCompleted(String(task._id), []);
+      } catch (error: any) {
+        await markFailed(String(task._id), error?.message || 'Processing failed');
+      }
+    })();
 
     res.status(201).json({ taskId: String(task._id), status: task.status, price: task.price });
   } catch (error: any) {

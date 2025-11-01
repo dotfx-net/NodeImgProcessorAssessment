@@ -13,5 +13,6 @@ function getEnv(key: string, fallback?: string): string {
 
 export const env = {
   PORT: Number(getEnv('PORT', String(config?.express?.port || 3000))),
+  MONGODB_URI: getEnv('MONGODB_URI', config?.mongodb?.uri || 'mongodb://localhost:27017/image_task_api'),
   NODE_ENV: getEnv('NODE_ENV', config.env)
 };

@@ -22,3 +22,25 @@ export async function getTask(taskId: string) {
 
   return TaskModel.findById(taskId).lean();
 }
+
+export async function markCompleted(taskId: string, images: Array<{ resolution: string; path: string }>) {
+  return await TaskModel.findByIdAndUpdate(
+    taskId,
+    {
+      $set: { status: 'completed', images },
+      $currentDate: { updatedAt: true }
+    },
+    { new: true }
+  );
+}
+
+export async function markFailed(taskId: string, error: string) {
+  return await TaskModel.findByIdAndUpdate(
+    taskId,
+    {
+      $set: { status: 'failed', error },
+      $currentDate: { updatedAt: true }
+    },
+    { new: true }
+  );
+}

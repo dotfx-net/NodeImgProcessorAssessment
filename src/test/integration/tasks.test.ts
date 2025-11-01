@@ -36,6 +36,18 @@ describe('Tasks API integration tests', () => {
 
       expect(response.body).toHaveProperty('error');
     });
+
+    it('should save task to database', async () => {
+      const response = await request(app)
+        .post('/tasks')
+        .send({ source: 'https://picsum.photos/1' })
+        .expect(201);
+
+      const task = await TaskModel.findById(response.body.taskId);
+
+      expect(task).toBeDefined();
+      expect(task?.status).toBe('pending');
+    });
   });
 
   describe('GET /tasks/:taskId', () => {

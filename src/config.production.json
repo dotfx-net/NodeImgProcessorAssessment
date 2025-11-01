@@ -3,5 +3,8 @@
   "express": {
     "jsonLimit": "1kb",
     "requestTimeout": 30000
+  },
+  "mongodb": {
+    "uri": "mongodb://localhost:27017/image_task_api"
   }
 }

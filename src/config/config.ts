@@ -12,6 +12,10 @@ export interface Config {
   cors?: {
     origin: string;
   };
+
+  mongodb?: {
+    uri: string;
+  };
 };
 
 function loadConfig(): Config {

@@ -9,7 +9,8 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "test:unit": "cross-env NODE_ENV=development jest --config jest.config.unit.json --detectOpenHandles --forceExit",
-    "test:integration": "cross-env NODE_ENV=development jest --config jest.config.integration.json --detectOpenHandles --forceExit"
+    "test:integration": "cross-env NODE_ENV=development jest --config jest.config.integration.json --detectOpenHandles --forceExit",
+    "db:drop": "mongosh \"mongodb://localhost:27017/image_task_api\" --eval \"db.dropDatabase()\""
   },
   "author": "Christian Vandaele <christian@dotfx.net>",
   "dependencies": {
@@ -31,9 +32,11 @@
     "@types/express": "^5.0.5",
     "@types/jest": "^30.0.0",
     "@types/morgan": "^1.9.10",
+    "@types/supertest": "^6.0.3",
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.8",
     "jest": "^30.2.0",
+    "mongodb-memory-server": "^10.3.0",
     "nodemon": "^3.1.10",
     "ts-jest": "^29.4.5",
     "ts-node": "^10.9.2",

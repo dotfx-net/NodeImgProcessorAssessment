@@ -1,17 +1,24 @@
 import { createServer } from './app';
 import { env } from './config/env';
+import { connectDB, disconnectDB } from './config/db';
 
 async function main() {
+  await connectDB();
+
   const app = createServer();
   const server = app.listen(env.PORT, () => console.log(`Server running on http://localhost:${env.PORT}`));
 
   const shutdownHandler = (signal: string) => {
     console.log(`\nCaught ${signal}. Shutting down...`);
 
-    server.close(() => {
-      console.log('Server closed');
+    server.close(async () => {
+      try {
+        await disconnectDB();
+      } finally {
+        console.log('Server closed');
 
-      process.exit(0);
+        process.exit(0);
+      }
     });
 
     setTimeout(() => {
