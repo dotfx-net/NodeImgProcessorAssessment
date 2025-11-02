@@ -8,6 +8,7 @@
     "dev": "cross-env NODE_ENV=development nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
     "build": "tsc && cp src/config.production.json dist/",
     "start": "node dist/index.js",
+
     "test:unit": "cross-env NODE_ENV=development jest --config jest.config.unit.json --detectOpenHandles --forceExit",
     "test:integration": "cross-env NODE_ENV=development jest --config jest.config.integration.json --detectOpenHandles --forceExit",
     "test:e2e": "concurrently --kill-others --success first \"npm run test:e2e:server\" \"npm run test:e2e:wait-and-run\"",
@@ -15,13 +16,29 @@
     "test:e2e:wait-and-run": "wait-on tcp:3001 && jest --testPathPatterns=e2e --runInBand --detectOpenHandles --forceExit",
     "test:e2e:postman": "concurrently --kill-others --success first \"npm run test:e2e:server\" \"npm run test:e2e:wait-and-run-newman\"",
     "test:e2e:wait-and-run-newman": "wait-on tcp:3001 && newman run src/test/e2e/postman_collection.json",
+
     "indexes:create": "npx ts-node scripts/manage-indexes.ts create",
     "indexes:list": "npx ts-node scripts/manage-indexes.ts list",
     "indexes:drop": "npx ts-node scripts/manage-indexes.ts drop",
     "indexes:stats": "npx ts-node scripts/manage-indexes.ts stats",
     "db:drop": "mongosh \"mongodb://localhost:27017/image_task_api\" --eval \"db.dropDatabase()\"",
     "db:reset": "npm run db:drop && npm run indexes:create",
-    "db:seed": "npx ts-node scripts/seed-db.ts --clear --tasks=50 --stats"
+    "db:seed": "npx ts-node scripts/seed-db.ts --clear --tasks=50 --stats",
+
+    "docker:build": "docker build -t node-img-processor-assessment .",
+    "docker:run": "docker run -d -p 3000:3000 --name node-img-processor-assessment -e MONGODB_URI=mongodb://host.docker.internal:27017/image_task_api node-img-processor-assessment",
+    "docker:stop": "docker stop node-img-processor-assessment && docker rm node-img-processor-assessment",
+    "docker:logs": "docker logs -f node-img-processor-assessment",
+
+    "compose:up": "docker-compose up -d",
+    "compose:down": "docker-compose down",
+    "compose:logs": "docker-compose logs -f",
+    "compose:build": "docker-compose build",
+
+    "compose:prod:up": "docker-compose -f docker-compose.yml up -d",
+    "compose:prod:down": "docker-compose -f docker-compose.yml down",
+    "compose:prod:logs": "docker-compose -f docker-compose.yml logs -f",
+    "compose:prod:build": "docker-compose -f docker-compose.yml build --no-cache"
   },
   "author": "Christian Vandaele <christian@dotfx.net>",
   "dependencies": {
