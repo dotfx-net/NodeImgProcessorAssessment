@@ -20,7 +20,8 @@
     "indexes:drop": "npx ts-node scripts/manage-indexes.ts drop",
     "indexes:stats": "npx ts-node scripts/manage-indexes.ts stats",
     "db:drop": "mongosh \"mongodb://localhost:27017/image_task_api\" --eval \"db.dropDatabase()\"",
-    "db:reset": "npm run db:drop && npm run indexes:create"
+    "db:reset": "npm run db:drop && npm run indexes:create",
+    "db:seed": "npx ts-node scripts/seed-db.ts --clear --tasks=50 --stats"
   },
   "author": "Christian Vandaele <christian@dotfx.net>",
   "dependencies": {

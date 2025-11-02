@@ -274,6 +274,7 @@ npm run indexes:stats    # Index stats
 ```bash
 npm run db:drop          # Drop database: mongodb://localhost:27017/image_task_api
 npm run db:reset         # Drop + recreate indexes
+npm run db:seed          # Creates 50 sample tasks
 ```
 
 ---
