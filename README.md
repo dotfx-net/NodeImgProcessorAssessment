@@ -308,6 +308,145 @@ npm start
 
 ---
 
+### Docker Deployment
+
+Docker provides containerized deployment with MongoDB included.
+
+#### Prerequisites:
+- Docker Engine 20.10+
+- Docker Compose V2+
+
+#### Quick Start with Docker Compose:
+
+**1. Create environment file (`.env`):**
+```bash
+MONGO_USER=admin
+MONGO_PASSWORD=YourSecurePassword123
+PORT=3000
+```
+
+**2. Start services:**
+```bash
+# Using npm scripts
+npm run compose:up
+
+# Or directly with docker-compose
+docker-compose up -d
+
+# If sudo is required (Linux)
+sudo docker-compose up -d
+```
+
+**3. Verify deployment:**
+```bash
+# Check running containers
+docker-compose ps
+# or with sudo
+sudo docker-compose ps
+
+# View logs
+docker-compose logs -f api
+# or with sudo
+sudo docker-compose logs -f api
+```
+
+**4. Stop services:**
+```bash
+docker-compose down
+# or with sudo
+sudo docker-compose down
+```
+
+#### Docker Commands Reference:
+
+```bash
+# Build and start (rebuild images)
+npm run compose:build
+# or
+docker-compose up -d --build
+# or with sudo
+sudo docker-compose up -d --build
+
+# View logs
+npm run compose:logs
+# or
+docker-compose logs -f
+# or with sudo
+sudo docker-compose logs -f
+
+# Stop services
+npm run compose:down
+# or
+docker-compose down
+# or with sudo
+sudo docker-compose down
+
+# Restart services
+docker-compose restart
+# or with sudo
+sudo docker-compose restart
+
+# Stop and remove volumes (WARNING: deletes data)
+docker-compose down -v
+# or with sudo
+sudo docker-compose down -v
+```
+
+#### Manual Docker Build (without Compose):
+
+```bash
+# Build image
+npm run docker:build
+# or
+docker build -t node-img-processor-assessment .
+# or with sudo
+sudo docker build -t node-img-processor-assessment .
+
+# Run container
+npm run docker:run
+# or
+docker run -d -p 3000:3000 \
+  -e NODE_ENV=production \
+  -e MONGODB_URI=mongodb://host.docker.internal:27017/image_task_api \
+  --name api \
+  node-img-processor-assessment
+# or with sudo
+sudo docker run -d -p 3000:3000 \
+  -e NODE_ENV=production \
+  -e MONGODB_URI=mongodb://host.docker.internal:27017/image_task_api \
+  --name api \
+  node-img-processor-assessment
+
+# View logs
+npm run docker:logs
+# or
+docker logs -f api
+# or with sudo
+sudo docker logs -f api
+
+# Stop and remove
+npm run docker:stop
+# or
+docker stop api && docker rm api
+# or with sudo
+sudo docker stop api && sudo docker rm api
+```
+
+#### Docker Configuration Files:
+
+- **`Dockerfile`**: Multi-stage build for optimized production image
+- **`docker-compose.yml`**: Production setup with MongoDB
+- **`.dockerignore`**: Excludes unnecessary files from image
+- **`.env`**: Environment variables
+
+#### Docker Image Details:
+
+- **Base Image**: `node:20-alpine` (lightweight, secure)
+- **User**: Non-root user `nodejs:nodejs` for security
+- **Exposed Port**: 3000
+
+---
+
 ## Optimizations & Trade-offs
 
 ### Current Implementation:
@@ -329,6 +468,7 @@ npm start
 11. **Caching Layer**: Redis for task status caching to reduce database load and improve response times
 12. **Webhooks**: Notify clients when processing completes instead of requiring polling
 13. **Batch Processing**: Process multiple images in a single request for bulk operations
+14. **Health Check endpoint** for orchestration tools (Kubernetes, Docker Swarm)
 
 ---
 
