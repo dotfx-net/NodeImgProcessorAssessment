@@ -10,7 +10,12 @@
     "start": "node dist/index.js",
     "test:unit": "cross-env NODE_ENV=development jest --config jest.config.unit.json --detectOpenHandles --forceExit",
     "test:integration": "cross-env NODE_ENV=development jest --config jest.config.integration.json --detectOpenHandles --forceExit",
-    "db:drop": "mongosh \"mongodb://localhost:27017/image_task_api\" --eval \"db.dropDatabase()\""
+    "indexes:create": "npx ts-node scripts/manage-indexes.ts create",
+    "indexes:list": "npx ts-node scripts/manage-indexes.ts list",
+    "indexes:drop": "npx ts-node scripts/manage-indexes.ts drop",
+    "indexes:stats": "npx ts-node scripts/manage-indexes.ts stats",
+    "db:drop": "mongosh \"mongodb://localhost:27017/image_task_api\" --eval \"db.dropDatabase()\"",
+    "db:reset": "npm run db:drop && npm run indexes:create"
   },
   "author": "Christian Vandaele <christian@dotfx.net>",
   "dependencies": {

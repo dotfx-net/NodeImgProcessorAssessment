@@ -38,9 +38,17 @@ const TaskSchema = new Schema<ITask>(
     ],
     error: { type: String }
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+
+    // optimize for lean queries
+    toJSON: { virtuals: false },
+    toObject: { virtuals: false }
+  }
 );
 
-TaskSchema.index({ createdAt: -1 });
+TaskSchema.index({ createdAt: -1 });            // query recent tasks
+TaskSchema.index({ status: 1, createdAt: -1 }); // query tasks by status, sorted by date
+TaskSchema.index({ status: 1, updatedAt: -1 }); // query tasks by status and last update
 
 export const TaskModel = mongoose.model<ITask>('Task', TaskSchema);

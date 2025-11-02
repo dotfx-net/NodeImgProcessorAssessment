@@ -3,7 +3,7 @@ import { env } from './config/env';
 import { connectDB, disconnectDB } from './config/db';
 
 async function main() {
-  await connectDB();
+  await connectDB(true);
 
   const app = createServer();
   const server = app.listen(env.PORT, () => console.log(`Server running on http://localhost:${env.PORT}`));
