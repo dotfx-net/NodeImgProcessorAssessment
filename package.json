@@ -6,10 +6,15 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
-    "build": "tsc",
+    "build": "tsc && cp src/config.production.json dist/",
     "start": "node dist/index.js",
     "test:unit": "cross-env NODE_ENV=development jest --config jest.config.unit.json --detectOpenHandles --forceExit",
     "test:integration": "cross-env NODE_ENV=development jest --config jest.config.integration.json --detectOpenHandles --forceExit",
+    "test:e2e": "concurrently --kill-others --success first \"npm run test:e2e:server\" \"npm run test:e2e:wait-and-run\"",
+    "test:e2e:server": "cross-env NODE_ENV=test PORT=3001 ts-node src/index.ts",
+    "test:e2e:wait-and-run": "wait-on tcp:3001 && jest --testPathPatterns=e2e --runInBand --detectOpenHandles --forceExit",
+    "test:e2e:postman": "concurrently --kill-others --success first \"npm run test:e2e:server\" \"npm run test:e2e:wait-and-run-newman\"",
+    "test:e2e:wait-and-run-newman": "wait-on tcp:3001 && newman run src/test/e2e/postman_collection.json",
     "indexes:create": "npx ts-node scripts/manage-indexes.ts create",
     "indexes:list": "npx ts-node scripts/manage-indexes.ts list",
     "indexes:drop": "npx ts-node scripts/manage-indexes.ts drop",
@@ -26,6 +31,7 @@
     "express": "^5.1.0",
     "mongoose": "^8.19.2",
     "morgan": "^1.10.1",
+    "newman": "^6.2.1",
     "sharp": "^0.34.4",
     "supertest": "^7.1.4",
     "swagger-jsdoc": "^6.2.8",
@@ -41,12 +47,14 @@
     "@types/supertest": "^6.0.3",
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.8",
+    "concurrently": "^9.2.1",
     "jest": "^30.2.0",
     "mongodb-memory-server": "^10.3.0",
     "nodemon": "^3.1.10",
     "ts-jest": "^29.4.5",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "wait-on": "^9.0.1"
   }
 }

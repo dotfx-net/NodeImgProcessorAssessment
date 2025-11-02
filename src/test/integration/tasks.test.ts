@@ -2,6 +2,7 @@ import request from 'supertest';
 import { createServer } from '../../app';
 import { TaskModel } from '../../models/task.model';
 import { ImageModel } from '../../models/image.model';
+import { randomInt } from '../../utils/randomInt';
 
 const app = createServer();
 
@@ -10,7 +11,7 @@ describe('Tasks API integration tests', () => {
     it('should create a new task with valid source', async () => {
       const response = await request(app)
         .post('/tasks')
-        .send({ source: 'https://picsum.photos/1' })
+        .send({ source: 'https://picsum.photos/' + randomInt(1, 5_000) })
         .expect(201);
 
       expect(response.body).toHaveProperty('taskId');
@@ -41,7 +42,7 @@ describe('Tasks API integration tests', () => {
     it('should save task to database', async () => {
       const response = await request(app)
         .post('/tasks')
-        .send({ source: 'https://picsum.photos/1' })
+        .send({ source: 'https://picsum.photos/' + randomInt(1, 5_000) })
         .expect(201);
 
       const task = await TaskModel.findById(response.body.taskId);
@@ -55,7 +56,7 @@ describe('Tasks API integration tests', () => {
     it('should return task for valid taskId', async () => {
       const createResponse = await request(app)
         .post('/tasks')
-        .send({ source: 'https://picsum.photos/1' });
+        .send({ source: 'https://picsum.photos/' + randomInt(1, 5_000) });
 
       const taskId = createResponse.body.taskId;
       const response = await request(app)
@@ -111,7 +112,7 @@ describe('Tasks API integration tests', () => {
     it('should process task in background and update status', async () => {
       const response = await request(app)
         .post('/tasks')
-        .send({ source: 'https://picsum.photos/1' })
+        .send({ source: 'https://picsum.photos/' + randomInt(1, 5_000) })
         .expect(201);
 
       const taskId = response.body.taskId;

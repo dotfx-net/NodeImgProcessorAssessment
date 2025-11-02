@@ -70,7 +70,7 @@ export async function processAndSave(taskId: string, src: string, sizes: number[
 
     for (const w of sizes) {
       const resized = await sharp(buf)
-        .resize({ width: w, withoutEnlargement: true })
+        .resize({ width: w, withoutEnlargement: false })
         .toFormat(format)
         .toBuffer();
 

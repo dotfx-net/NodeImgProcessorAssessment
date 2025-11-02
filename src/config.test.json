@@ -1,0 +1,17 @@
+{
+  "env": "test",
+  "express": {
+    "jsonLimit": "1kb",
+    "requestTimeout": 30000
+  },
+  "cors": {
+    "origin": "http://localhost:3001"
+  },
+  "mongodb": {
+    "uri": "mongodb://localhost:27017/image_task_api"
+  },
+  "processing": {
+    "sizes": [1024, 800],
+    "output": "output"
+  }
+}
