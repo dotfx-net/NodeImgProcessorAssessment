@@ -1,5 +1,10 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
+export interface IProcessedImage {
+  resolution: string;
+  path: string;
+}
+
 export interface IImage extends Document {
   taskId: mongoose.Types.ObjectId;
   name: string;

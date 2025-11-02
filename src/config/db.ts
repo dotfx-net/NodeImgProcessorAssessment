@@ -4,8 +4,8 @@ import { env } from './env';
 
 let isConnected = false;
 
-export async function connectDB(createIndexes: boolean = false) {
-  if (isConnected) { return mongoose.connection; }
+export async function connectDB(createIndexes: boolean = false): Promise<void> {
+  if (isConnected) { return; }
 
   mongoose.connection
     .on('connected', () => {
@@ -31,7 +31,7 @@ export async function connectDB(createIndexes: boolean = false) {
   }
 }
 
-export async function disconnectDB() {
+export async function disconnectDB(): Promise<void> {
   if (!isConnected) { return; }
 
   await mongoose.disconnect();

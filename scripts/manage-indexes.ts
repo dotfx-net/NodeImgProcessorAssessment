@@ -1,7 +1,7 @@
 import { connectDB, disconnectDB } from '../src/config/db';
 import { ensureIndexes, listIndexes, dropIndexes, getIndexStats } from '../src/services/index.service';
 
-async function main() {
+async function main(): Promise<void> {
   const command = process.argv[2];
 
   await connectDB();

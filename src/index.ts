@@ -2,7 +2,7 @@ import { createServer } from './app';
 import { env } from './config/env';
 import { connectDB, disconnectDB } from './config/db';
 
-async function main() {
+async function main(): Promise<void> {
   await connectDB(true);
 
   const app = createServer();

@@ -4,7 +4,7 @@ import path from 'path';
 import crypto from 'crypto';
 import { md5 } from '../utils/hash';
 import { config } from '../config/config';
-import { ImageModel } from '../models/image.model';
+import { ImageModel, IProcessedImage } from '../models/image.model';
 
 interface ImageBuffer {
   buf: Buffer;
@@ -60,13 +60,13 @@ export async function loadImageBuffer(src: string): Promise<ImageBuffer> {
   };
 }
 
-export async function processAndSave(taskId: string, src: string, sizes: number[]) {
+export async function processAndSave(taskId: string, src: string, sizes: number[]): Promise<IProcessedImage[]> {
   try {
     const { buf, name, mimeType } = await loadImageBuffer(src);
 
     const format = formatMap[mimeType] || 'jpeg';
     const outputExt = format === 'jpeg' ? '.jpg' : `.${format}`;
-    const outputs: Array<{ resolution: string; path: string }> = [];
+    const outputs: IProcessedImage[] = [];
 
     for (const w of sizes) {
       const resized = await sharp(buf)

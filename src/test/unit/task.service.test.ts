@@ -49,8 +49,8 @@ describe('Task service', () => {
       const created = await createTask('https://upload.wikimedia.org/wikipedia/commons/2/28/JPG_Test.jpg');
       const task = await getTask(String(created._id));
 
-      expect(task).toBeDefined();
-      expect(task?.originalPath).toBe('https://upload.wikimedia.org/wikipedia/commons/2/28/JPG_Test.jpg');
+      expect(task).not.toBeNull();
+      expect(task?.originalPath!).toBe('https://upload.wikimedia.org/wikipedia/commons/2/28/JPG_Test.jpg');
     });
   });
 

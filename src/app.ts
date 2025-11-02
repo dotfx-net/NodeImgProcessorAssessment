@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { type Express } from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import errorhandler from 'errorhandler';
@@ -9,7 +9,7 @@ import { env } from './config/env';
 import { errorHandler } from './middleware/errorHandler';
 import { swaggerSpec } from './config/swagger';
 
-export function createServer() {
+export function createServer(): Express {
   const app = express();
   const isDev = env.NODE_ENV === 'development';
 

@@ -4,7 +4,7 @@ import type { TaskStatus } from '../models/task.model';
 import { processAndSave } from '../services/image.service';
 import { config } from '../config/config';
 
-interface TaskResponse {
+export interface TaskResponse {
   taskId: string;
   status: TaskStatus;
   price: number;
@@ -12,7 +12,7 @@ interface TaskResponse {
   error?: string;
 };
 
-export async function getTaskById(req: Request, res: Response, next: NextFunction) {
+export async function getTaskById(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { taskId } = req.params as { taskId: string };
     const task = await getTask(taskId);
@@ -44,7 +44,7 @@ export async function getTaskById(req: Request, res: Response, next: NextFunctio
   }
 }
 
-export async function postTask(req: Request, res: Response, next: NextFunction) {
+export async function postTask(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { source } = req.body as { source: string };
     const task = await createTask(source);
