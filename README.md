@@ -345,9 +345,9 @@ docker-compose ps
 sudo docker-compose ps
 
 # View logs
-docker-compose logs -f api
+docker-compose logs -f node-img-processor-assessment
 # or with sudo
-sudo docker-compose logs -f api
+sudo docker-compose logs -f node-img-processor-assessment
 ```
 
 **4. Stop services:**
@@ -390,46 +390,6 @@ sudo docker-compose restart
 docker-compose down -v
 # or with sudo
 sudo docker-compose down -v
-```
-
-#### Manual Docker Build (without Compose):
-
-```bash
-# Build image
-npm run docker:build
-# or
-docker build -t node-img-processor-assessment .
-# or with sudo
-sudo docker build -t node-img-processor-assessment .
-
-# Run container
-npm run docker:run
-# or
-docker run -d -p 3000:3000 \
-  -e NODE_ENV=production \
-  -e MONGODB_URI=mongodb://host.docker.internal:27017/image_task_api \
-  --name api \
-  node-img-processor-assessment
-# or with sudo
-sudo docker run -d -p 3000:3000 \
-  -e NODE_ENV=production \
-  -e MONGODB_URI=mongodb://host.docker.internal:27017/image_task_api \
-  --name api \
-  node-img-processor-assessment
-
-# View logs
-npm run docker:logs
-# or
-docker logs -f api
-# or with sudo
-sudo docker logs -f api
-
-# Stop and remove
-npm run docker:stop
-# or
-docker stop api && docker rm api
-# or with sudo
-sudo docker stop api && sudo docker rm api
 ```
 
 #### Docker Configuration Files:
