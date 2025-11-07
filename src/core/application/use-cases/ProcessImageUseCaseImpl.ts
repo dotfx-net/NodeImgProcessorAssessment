@@ -14,32 +14,31 @@ export class ProcessImageUseCaseImpl implements ProcessImageUseCase {
   ) {}
 
   async execute(taskId: string, source: string): Promise<void> {
+    const task = await this.taskRepository.findById(taskId);
+
+    if (!task) { throw new Error('Task not found'); }
+
     try {
-      const imageSource = await this.imageProcessor.loadImageBuffer(source);
-      const processedImages = await this.imageProcessor.processImage(imageSource, this.resolutions);
+      const imageBuffer = await this.imageProcessor.loadImageBuffer(source);
+      const processedImages = await this.imageProcessor.processImage(imageBuffer, this.resolutions);
       const images: TaskImage[] = [];
 
       for (const processedImage of processedImages) {
         const savedPath = await this.imageProcessor.saveImage(processedImage);
-        const image = Image.create(taskId, imageSource.name, imageSource.mimeType, processedImage.resolution, processedImage.md5, savedPath);
+        const image = Image.create(taskId, imageBuffer.name, imageBuffer.mimeType, processedImage.resolution, processedImage.md5, savedPath);
 
         await this.imageRepository.save(image);
 
         images.push({ resolution: processedImage.resolution, path: savedPath });
       }
 
-      const task = await this.taskRepository.findById(taskId);
       const completedTask = task.markAsCompleted(images);
 
       await this.taskRepository.update(completedTask);
     } catch (error: any) {
-      const task = await this.taskRepository.findById(taskId);
+      const failedTask = task.markAsFailed(error.message);
 
-      if (!!task) {
-        const failedTask = task.markAsFailed(error.message);
-
-        await this.taskRepository.update(failedTask);
-      }
+      await this.taskRepository.update(failedTask);
 
       throw error;
     }

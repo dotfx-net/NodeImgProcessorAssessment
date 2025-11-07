@@ -8,6 +8,8 @@ export class GetTaskUseCaseImpl implements GetTaskUseCase {
   ) {}
 
   async execute(taskId: string): Promise<Task | null> {
+    if (taskId.trim() === '') { throw new Error('TaskId cannot be empty'); }
+
     const task = await this.taskRepository.findById(taskId);
 
     return task;

@@ -1,4 +1,4 @@
-import { PriceCalculator } from '@core/application/ports/out/PriceCalculator';
+import { PriceCalculator } from '@/core/application/ports/out/PriceCalculator';
 import { randomInt } from '@/shared/utils/randomInt';
 
 export class RandomPriceCalculator implements PriceCalculator {

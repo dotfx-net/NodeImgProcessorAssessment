@@ -43,4 +43,24 @@ export class MongoTaskRepository implements TaskRepository {
       throw new Error(`Failed to update task: ${(error as Error).message}`);
     }
   }
+
+  async delete(id: string): Promise<boolean> {
+    try {
+      const result = await TaskModel.findByIdAndDelete(id);
+
+      return result !== null;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  async findAll(): Promise<Task[]> {
+    try {
+      const docs = await TaskModel.find().lean();
+
+      return docs.map((doc) => TaskMapper.toDomain(doc));
+    } catch (error) {
+      throw new Error(`Failed to find tasks: ${(error as Error).message}`);
+    }
+  }
 };

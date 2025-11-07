@@ -10,6 +10,8 @@ export class CreateTaskUseCaseImpl implements CreateTaskUseCase {
   ) {}
 
   async execute(source: string): Promise<Task> {
+    if (source.trim() === '') { throw new Error('Source cannot be empty'); }
+
     const price = this.priceCalculator.calculate();
     const task = Task.create(source, price);
     const savedTask = await this.taskRepository.save(task);

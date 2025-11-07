@@ -36,4 +36,14 @@ export class MongoImageRepository implements ImageRepository {
       throw new Error(`Failed to find images by taskId: ${(error as Error).message}`);
     }
   }
+
+  async deleteByTaskId(taskId: string): Promise<number> {
+    try {
+      const result = await ImageModel.deleteMany({ taskId });
+
+      return result.deletedCount || 0;
+    } catch (error) {
+      throw new Error(`Failed to delete images: ${(error as Error).message}`);
+    }
+  }
 };
