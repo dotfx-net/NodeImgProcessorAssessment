@@ -131,7 +131,7 @@ const getTaskSchema = z.object({
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
- 
+
 export function createTaskRoutes(container: DIContainer): Router {
   const router = Router();
   const controller = new TaskController(
