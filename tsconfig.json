@@ -7,7 +7,9 @@
     "moduleResolution": "node",
     "baseUrl": "./src",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@core": ["./core/*"],
+      "@shared": ["./shared/*"]
     },
     "resolveJsonModule": true,
     "outDir": "./dist",

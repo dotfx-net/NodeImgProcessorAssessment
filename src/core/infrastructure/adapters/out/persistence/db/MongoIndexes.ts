@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
-import { TaskModel } from '../models/task.model';
-import { ImageModel } from '../models/image.model';
+import { TaskModel } from './models/TaskModel';
+import { ImageModel } from './models/ImageModel';
 
 export async function ensureIndexes(): Promise<void> {
   try {

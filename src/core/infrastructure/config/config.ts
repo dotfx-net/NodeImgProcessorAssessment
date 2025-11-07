@@ -25,7 +25,7 @@ export interface Config {
 
 function loadConfig(): Config {
   const env = process.env.NODE_ENV || 'production';
-  const configPath = path.join(__dirname, `../config.${env}.json`);
+  const configPath = path.join(process.cwd(), `config.${env}.json`);
 
   if (!fs.existsSync(configPath)) { throw new Error(`Config file not found: ${configPath}`); }
 

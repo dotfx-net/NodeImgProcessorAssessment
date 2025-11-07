@@ -1,10 +1,8 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import { IProcessedImage } from './image.model';
 
-export type TaskStatus = 'pending' | 'completed' | 'failed';
-
 export interface ITask extends Document {
-  status: TaskStatus;
+  status: string;
   price: number;
   originalPath: string;
   images: IProcessedImage[];

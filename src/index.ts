@@ -1,12 +1,19 @@
 import { createServer } from './app';
-import { env } from './config/env';
-import { connectDB, disconnectDB } from './config/db';
+import { env } from '@/core/infrastructure/config/env';
+import { connectDB, disconnectDB } from '@/core/infrastructure/config/db';
+import { DIContainer } from '@/core/infrastructure/config/di-container';
 
 async function main(): Promise<void> {
-  await connectDB(true);
+  await connectDB();
 
-  const app = createServer();
-  const server = app.listen(env.PORT, () => console.log(`Server running on http://localhost:${env.PORT}`));
+  const container = DIContainer.getInstance();
+  await container.initialize();
+
+  const app = createServer(container);
+  const server = app.listen(env.PORT, () => {
+    console.log(`Server running on http://localhost:${env.PORT}`);
+    console.log(`API Docs: http://localhost:${env.PORT}/api-docs`);
+  });
 
   const shutdownHandler = (signal: string) => {
     console.log(`\nCaught ${signal}. Shutting down...`);

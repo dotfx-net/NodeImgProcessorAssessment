@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import { env } from '../config/env';
+import { env } from '@/core/infrastructure/config/env';
 
-export function errorHandler(err: any, req: Request, res: Response, _next: NextFunction) {
+export function errorHandler(err: any, req: Request, res: Response, next: NextFunction): void {
   const status = err.status || err.statusCode || 500;
   const isDev = env.NODE_ENV === 'development';
 
@@ -9,7 +9,7 @@ export function errorHandler(err: any, req: Request, res: Response, _next: NextF
     console.error('Server Error:', {
       status,
       message: err.message,
-      stack: isDev ? err.stack : undefined, // stack trace only in dev
+      stack: isDev ? err.stack : undefined,
       path: req.path,
       method: req.method,
       body: req.body

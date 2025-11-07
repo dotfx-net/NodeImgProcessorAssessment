@@ -1,9 +1,8 @@
 import { Router } from 'express';
-import { postTask, getTaskById } from '../controllers/tasks.controller';
-import { validate } from '../middleware/validate';
+import { DIContainer } from '@/core/infrastructure/config/di-container';
+import { TaskController } from '@/core/infrastructure/adapters/in/http/controllers/TaskController';
+import { validate } from '@/core/infrastructure/adapters/in/http/middleware/validate';
 import { z } from 'zod';
-
-const router = Router();
 
 const createTaskSchema = z.object({
   body: z.object({
@@ -59,7 +58,6 @@ const getTaskSchema = z.object({
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post('/', validate(createTaskSchema), postTask);
 
 /**
  * @swagger
@@ -133,6 +131,17 @@ router.post('/', validate(createTaskSchema), postTask);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get('/:taskId', validate(getTaskSchema), getTaskById);
+ 
+export function createTaskRoutes(container: DIContainer): Router {
+  const router = Router();
+  const controller = new TaskController(
+    container.getCreateTaskUseCase(),
+    container.getGetTaskUseCase(),
+    container.getProcessImageUseCase()
+  );
 
-export default router;
+  router.post('/', validate(createTaskSchema), (req, res, next) => controller.createTask(req, res, next));
+  router.get('/:taskId', validate(getTaskSchema), (req, res, next) => controller.getTask(req, res, next));
+
+  return router;
+}

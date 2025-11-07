@@ -3,13 +3,14 @@ import cors from 'cors';
 import morgan from 'morgan';
 import errorhandler from 'errorhandler';
 import swaggerUi from 'swagger-ui-express';
-import tasksRouter from './routes/tasks.routes';
-import { config } from './config/config';
-import { env } from './config/env';
-import { errorHandler } from './middleware/errorHandler';
-import { swaggerSpec } from './config/swagger';
+import { config } from '@/core/infrastructure/config/config';
+import { env } from '@/core/infrastructure/config/env';
+import { swaggerSpec } from '@/core/infrastructure/config/swagger';
+import { DIContainer } from '@/core/infrastructure/config/di-container';
+import { errorHandler } from '@/core/infrastructure/adapters/in/http/middleware/errorHandler';
+import { createTaskRoutes } from '@/core/infrastructure/adapters/in/http/routes/tasks.routes';
 
-export function createServer(): Express {
+export function createServer(container: DIContainer): Express {
   const app = express();
   const isDev = env.NODE_ENV === 'development';
 
@@ -29,7 +30,7 @@ export function createServer(): Express {
     customSiteTitle: 'Image Processing API'
   }));
 
-  app.use('/tasks', tasksRouter);
+  app.use('/tasks', createTaskRoutes(container));
 
   if (isDev) {
     app.use(errorhandler());
