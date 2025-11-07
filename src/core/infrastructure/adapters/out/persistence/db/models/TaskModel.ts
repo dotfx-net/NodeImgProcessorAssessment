@@ -1,11 +1,11 @@
 import mongoose, { Schema, Document } from 'mongoose';
-import { IProcessedImage } from './image.model';
+import { ProcessedImage } from '@/core/application/ports/out/ImageProcessor';
 
 export interface ITask extends Document {
   status: string;
   price: number;
   originalPath: string;
-  images: IProcessedImage[];
+  images: ProcessedImage[];
   error: string;
   createdAt: Date;
   updatedAt: Date;

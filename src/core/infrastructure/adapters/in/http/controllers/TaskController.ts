@@ -2,7 +2,6 @@ import { Request, Response, NextFunction } from 'express';
 import { CreateTaskUseCase } from '@/core/application/ports/in/CreateTaskUseCase';
 import { GetTaskUseCase } from '@/core/application/ports/in/GetTaskUseCase';
 import { ProcessImageUseCase } from '@/core/application/ports/in/ProcessImageUseCase';
-import { TaskStatus } from '@/core/domain/entities/Task';
 import { TaskResponseMapper } from '@/core/infrastructure/adapters/in/http/dtos/TaskResponse';
 
 export class TaskController {
@@ -31,7 +30,7 @@ export class TaskController {
     try {
       const { taskId } = req.params;
 
-      const task = await this.getTaskUseCase.execute(taskId);
+      const task = await this.getTaskUseCase.execute(taskId!);
 
       if (!task) {
         res.status(404).json({ error: 'Task not found' });

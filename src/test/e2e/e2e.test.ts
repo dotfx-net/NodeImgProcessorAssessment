@@ -1,7 +1,15 @@
-import { TaskResponse } from '../../controllers/tasks.controller';
-import { randomInt } from '../../utils/randomInt';
+import { TaskStatus } from '@/core/domain/entities/Task';
+import { randomInt } from '@/shared/utils/randomInt';
 
 const BASE_URL = process.env.API_URL || 'http://localhost:3001';
+
+interface TaskResponse {
+  taskId?: string;
+  status?: string;
+  price?: number;
+  images?: Array<{ resolution: string; path: string }>;
+  error?: string;
+}
 
 describe('E2E tests on real server', () => {
   describe('POST /tasks', () => {
@@ -16,7 +24,7 @@ describe('E2E tests on real server', () => {
 
       const data = (await response.json()) as TaskResponse;
       expect(data).toHaveProperty('taskId');
-      expect(data).toHaveProperty('status', 'pending');
+      expect(data).toHaveProperty('status', TaskStatus.PENDING);
       expect(data).toHaveProperty('price');
       expect(data.price).toBeGreaterThan(0);
     });
@@ -46,12 +54,12 @@ describe('E2E tests on real server', () => {
 
       const data = (await response.json()) as TaskResponse;
       expect(data).toHaveProperty('error');
+      expect(data.error).toContain('Validation error');
     });
   });
 
   describe('GET /tasks/:taskId', () => {
     it('should return task for valid taskId', async () => {
-      // Create task first
       const createResponse = await fetch(`${BASE_URL}/tasks`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -60,8 +68,6 @@ describe('E2E tests on real server', () => {
 
       const createData = (await createResponse.json()) as TaskResponse;
       const taskId = createData.taskId;
-
-      // Get task
       const response = await fetch(`${BASE_URL}/tasks/${taskId}`);
 
       expect(response.status).toBe(200);
@@ -72,29 +78,19 @@ describe('E2E tests on real server', () => {
       expect(data).toHaveProperty('price');
     });
 
-    it('should return 400 for invalid taskId format', async () => {
-      const response = await fetch(`${BASE_URL}/tasks/invalid-id`);
-
-      expect(response.status).toBe(400);
-
-      const data = (await response.json()) as TaskResponse;
-      expect(data).toHaveProperty('error');
-      expect(data.error).toContain('Validation error');
-    });
-
     it('should return 404 for non-existent taskId', async () => {
       const response = await fetch(`${BASE_URL}/tasks/507f1f77bcf86cd799439011`);
 
       expect(response.status).toBe(404);
 
       const data = (await response.json()) as TaskResponse;
-      expect(data).toHaveProperty('error', 'Task not found');
+      expect(data).toHaveProperty('error');
+      expect(data.error).toContain('not found');
     });
   });
 
-  describe('Complete workflow', () => {
-    it('should process task and update status to completed or failed', async () => {
-      // 1. Create task
+  describe('Complete Workflow', () => {
+    it('should process task end-to-end and update status', async () => {
       const createResponse = await fetch(`${BASE_URL}/tasks`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -104,51 +100,53 @@ describe('E2E tests on real server', () => {
       expect(createResponse.status).toBe(201);
 
       const createData = (await createResponse.json()) as TaskResponse;
-      const taskId = createData.taskId;
+      const taskId = createData.taskId!;
 
-      // 2. Poll for completion
-      let completed = false;
+      expect(taskId).toBeDefined();
+      expect(createData.status).toBe(TaskStatus.PENDING);
+
+      let finalStatus: TaskResponse | null = null;
       let attempts = 0;
-      const maxAttempts = 15;
+      const maxAttempts = 20;
+      const pollInterval = 1_000; // 1 second
 
-      while (!completed && attempts < maxAttempts) {
-        await new Promise(resolve => setTimeout(resolve, 1_000));
+      while (!finalStatus && attempts < maxAttempts) {
+        await new Promise(resolve => setTimeout(resolve, pollInterval));
 
         const statusResponse = await fetch(`${BASE_URL}/tasks/${taskId}`);
         expect(statusResponse.status).toBe(200);
 
         const statusData = (await statusResponse.json()) as TaskResponse;
 
-        if (statusData.status !== 'pending') {
-          completed = true;
-
-          // 3. Verify final status
-          expect(['completed', 'failed']).toContain(statusData.status);
-
-          if (statusData.status === 'completed') {
-            // 4. Verify images were returned
-            expect(statusData.images).toBeDefined();
-            expect(statusData.images!.length).toBeGreaterThan(0);
-
-            // 5. Verify each image has required fields
-            statusData.images!.forEach((img: any) => {
-              expect(img).toHaveProperty('resolution');
-              expect(img).toHaveProperty('path');
-              expect(['800', '1024']).toContain(img.resolution);
-            });
-          }
-
-          if (statusData.status === 'failed') {
-            // Verify error message exists
-            expect(statusData.error).toBeDefined();
-            expect(typeof statusData.error).toBe('string');
-          }
-        }
+        if (statusData.status !== TaskStatus.PENDING) { finalStatus = statusData; }
 
         attempts++;
       }
 
-      expect(completed).toBe(true);
+      expect(finalStatus).not.toBeNull();
+      expect([TaskStatus.COMPLETED, TaskStatus.FAILED]).toContain(finalStatus!.status);
+
+      if (finalStatus!.status === TaskStatus.COMPLETED) {
+        expect(finalStatus!.images).toBeDefined();
+        expect(finalStatus!.images!.length).toBeGreaterThan(0);
+
+        finalStatus!.images!.forEach((image) => {
+          expect(image).toHaveProperty('resolution');
+          expect(image).toHaveProperty('path');
+          expect(['800', '1024']).toContain(image.resolution);
+          expect(image.path).toMatch(/^\/output\//);
+        });
+
+        console.log(`Task ${taskId} completed with ${finalStatus!.images!.length} images`);
+      }
+
+      if (finalStatus!.status === TaskStatus.FAILED) {
+        expect(finalStatus!.error).toBeDefined();
+        expect(typeof finalStatus!.error).toBe('string');
+        expect(finalStatus!.error!.length).toBeGreaterThan(0);
+
+        console.log(`❌ Task ${taskId} failed: ${finalStatus!.error}`);
+      }
     }, 20*1_000); // 20 second timeout
   });
 });

@@ -1,4 +1,4 @@
-import { Task, TaskImage, TaskStatus } from '@/core/domain/entities/Task';
+import { Task, TaskStatus } from '@/core/domain/entities/Task';
 
 export class TaskMapper {
   // convert Mongoose document to Domain entity
